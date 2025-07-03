@@ -6,5 +6,15 @@ edition = "2024"
 [dependencies]
 anyhow = "1.0.98"
 async-trait = "0.1.88"
+bytes = "1.10.1"
+futures = "0.3.31"
 rand = { version = "0.9.1", features = ["small_rng"] }
 tokio = { version = "1.46.0", features = ["full", "rt", "rt-multi-thread"] }
+
+[lib]
+name = "simulation_testing"
+path = "./src/lib.rs"
+
+[[bin]]
+name = "simulation_testing_bin"
+path = "./src/main.rs"
