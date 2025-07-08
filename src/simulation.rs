@@ -13,7 +13,7 @@ const MESSAGE_SIZE: usize = 128;
 #[async_trait]
 pub trait Simulation {
     async fn send_message(&mut self, address: &str, message: &[u8]) -> Result<()>;
-    async fn receive_message(&mut self) -> Result<Option<Bytes>>;
+    async fn receive_message(&mut self) -> Result<Bytes>;
 }
 
 pub struct RealWorldFunctionality {
@@ -35,7 +35,7 @@ impl Simulation for RealWorldFunctionality {
 
     // read exactly one message from a peer
     // currently this is not cancellation safe. need to figure out a way to do that.
-    async fn receive_message(&mut self) -> Result<Option<Bytes>> {
+    async fn receive_message(&mut self) -> Result<Bytes> {
         todo!();
         // let mut tasks = FuturesUnordered::new();
         //
