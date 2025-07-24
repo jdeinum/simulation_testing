@@ -1,14 +1,8 @@
 use anyhow::{Context, Result};
 use async_trait::async_trait;
 use bytes::{Bytes, BytesMut};
-use futures::stream::{FuturesUnordered, StreamExt};
 use std::collections::HashMap;
-use tokio::{
-    io::{AsyncReadExt, AsyncWriteExt},
-    net::TcpStream,
-};
-
-const MESSAGE_SIZE: usize = 128;
+use tokio::{io::AsyncWriteExt, net::TcpStream};
 
 #[async_trait]
 pub trait Simulation {

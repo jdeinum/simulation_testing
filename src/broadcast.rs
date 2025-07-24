@@ -12,6 +12,12 @@ pub struct BroadcastLayer<S: Simulation> {
 }
 
 impl<S: Simulation> BroadcastLayer<S> {
+    pub async fn build(peers: HashMap<String, String>) -> Result<Self> {
+        todo!()
+    }
+}
+
+impl<S: Simulation> BroadcastLayer<S> {
     pub async fn broadcast(&mut self, message: &str) -> Result<()> {
         self.buf.clear();
         self.buf.put(message.as_bytes());
