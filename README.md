@@ -6,4 +6,5 @@ am writing a post about this that contains my methodologies over on my
 
 # Status
 
-Not released yet :)
+Will be a little bit until I return to this, got sidetracked with memory and
+allocators :O 
