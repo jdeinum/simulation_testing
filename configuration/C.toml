@@ -1,0 +1,6 @@
+id = "node-c"
+endpoint = "0.0.0.0:8003"
+
+[peers]
+node-a = "node-a:8001"
+node-b = "node-b:8002"

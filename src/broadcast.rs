@@ -1,9 +1,7 @@
 use crate::simulation::Simulation;
 use anyhow::{Context, Result};
-use bytes::{BufMut, Bytes, BytesMut};
-use futures::future::join_all;
+use bytes::Bytes;
 use std::collections::HashSet;
-use tokio::{io::AsyncWriteExt, task::JoinSet};
 
 pub struct BroadcastLayer<S: Simulation> {
     pub peers: HashSet<String>,
@@ -27,25 +25,37 @@ impl<S: Simulation> BroadcastLayer<S> {
 
 impl<S: Simulation> BroadcastLayer<S> {
     pub async fn broadcast(&mut self, message: &str) -> Result<()> {
-        // vec of futures
-        // let mut f = JoinSet::new();
-
+        println!("[BroadcastLayer] Broadcasting message to {} peers: {}", self.peers.len(), message);
+        
         // for each peer, we send the message
         for peer in &self.peers {
+            println!("[BroadcastLayer] Sending to peer: {}", peer);
             self.s
-                .send_message(peer, message.as_bytes().as_ref())
+                .send_message(peer, message.as_bytes())
                 .await
-                .context("send message to peer");
+                .context("send message to peer")?;
         }
-
-        // let res: Result<Vec<_>, anyhow::Error> = f.join_all().await.into_iter().collect();
-        // let _ = res?;
+        
+        self.current_seq_number += 1;
         Ok(())
     }
 
-    pub async fn receive(&mut self) -> Result<Bytes> {
+    pub async fn receive(&mut self) -> Result<Option<Bytes>> {
         let b = self.s.receive_message().await.context("receive message")?;
-        let msg: String = String::from_utf8(&b).context("parse utf8 string from bytes")?;
-        self.messages.push(msg);
+        if let Some(bytes) = b {
+            if !bytes.is_empty() {
+                let msg = String::from_utf8(bytes.to_vec()).context("parse utf8 string from bytes")?;
+                let trimmed = msg.trim();
+                if !trimmed.is_empty() {
+                    println!("[BroadcastLayer] Received message: {}", trimmed);
+                    self.messages.push(trimmed.to_string());
+                }
+                Ok(Some(bytes))
+            } else {
+                Ok(None)
+            }
+        } else {
+            Ok(None)
+        }
     }
 }

@@ -1,0 +1,10 @@
+target/
+Dockerfile
+.dockerignore
+.git/
+.gitignore
+*.md
+run-simulation.sh
+docker-compose.yml
+examples/
+tests/

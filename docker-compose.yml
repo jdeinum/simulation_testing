@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  node-a:
+    build: .
+    container_name: node-a
+    command: ["./simulation_testing_bin", "--config", "/app/configuration/A.toml"]
+    ports:
+      - "8001:8001"
+    networks:
+      - simulation-net
+    depends_on:
+      - node-b
+      - node-c
+
+  node-b:
+    build: .
+    container_name: node-b
+    command: ["./simulation_testing_bin", "--config", "/app/configuration/B.toml"]
+    ports:
+      - "8002:8002"
+    networks:
+      - simulation-net
+
+  node-c:
+    build: .
+    container_name: node-c
+    command: ["./simulation_testing_bin", "--config", "/app/configuration/C.toml"]
+    ports:
+      - "8003:8003"
+    networks:
+      - simulation-net
+
+networks:
+  simulation-net:
+    driver: bridge
