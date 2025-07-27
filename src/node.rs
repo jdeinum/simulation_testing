@@ -1,8 +1,8 @@
 use crate::{broadcast::BroadcastLayer, simulation::Simulation};
 use anyhow::{Context, Result};
-use bytes::Bytes;
 use serde::Deserialize;
 use std::{collections::HashMap, path::Path};
+use tokio::select;
 
 #[derive(Deserialize, Debug)]
 pub struct NodeSettings {
@@ -30,6 +30,8 @@ impl<S: Simulation> Node<S> {
             .context("read settings to string")?;
         let settings: NodeSettings = toml::from_str(&f).context("parse settings from string")?;
 
+        // real world simulation
+
         // build our broadcast layer
         let broadcast_layer = BroadcastLayer::build(settings.peers)
             .await
@@ -46,14 +48,23 @@ impl<S: Simulation> Node<S> {
 
     // Run the node
     pub async fn run(mut self) -> Result<()> {
-        // 1 of 2 things can happen:
-        // 1. We generate a local event that we want to broadcast to other nodes
-        // 2. We receive a message from another node that we need to store in our log
-        todo!()
-    }
+        loop {
+            // 1 of 2 things can happen:
+            // 1. We generate a local event that we want to broadcast to other nodes
+            // 2. We receive a message from another node that we need to store in our log
+            select! {
 
-    // handle receiving a message from a node
-    pub fn handle_message(&mut self, message: Bytes) -> Result<()> {
-        todo!()
+                o = self.broadcast_layer.receive() => {
+
+                }
+
+                _ = tokio::time::timeout(Duration::from_secs(1)) => {
+                    // send message
+
+                }
+
+
+            }
+        }
     }
 }
